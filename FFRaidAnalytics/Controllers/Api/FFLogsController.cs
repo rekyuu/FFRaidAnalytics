@@ -13,6 +13,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Net;
 using System.Threading;
+using Microsoft.AspNetCore.Http;
 
 namespace FFRaidAnalytics.Controllers.Api
 {
@@ -32,12 +33,16 @@ namespace FFRaidAnalytics.Controllers.Api
         [HttpGet("login")]
         public async Task<ActionResult<FFLogsTokenModel>> Login()
         {
+            if (!IsAuthorized(Request)) return Unauthorized();
+
             return await GetToken();
         }
 
         [HttpGet("reports")]
         public async Task<ActionResult<IEnumerable<ReportModel>>> GetReports(string code = "")
         {
+            if (!IsAuthorized(Request)) return Unauthorized();
+
             if (string.IsNullOrEmpty(code))
             {
                 return await _context.Reports.OrderBy(x => x.StartTime).ToListAsync();
@@ -55,6 +60,8 @@ namespace FFRaidAnalytics.Controllers.Api
         [HttpPost("reports")]
         public async Task<ActionResult<object>> ProcessNewReports(DateTime? startDate = null, DateTime? endDate = null)
         {
+            if (!IsAuthorized(Request)) return Unauthorized();
+
             long reportsProcessed = 0;
             long fightsProcessed = 0;
             long playerFightDataProcessed = 0;
@@ -162,6 +169,8 @@ namespace FFRaidAnalytics.Controllers.Api
         [HttpGet("reports/fights")]
         public async Task<ActionResult<IEnumerable<ReportFightModel>>> GetReportFights(string code, long? fight = null)
         {
+            if (!IsAuthorized(Request)) return Unauthorized();
+
             if (fight == null)
             {
                 return await _context.ReportFights
@@ -182,6 +191,8 @@ namespace FFRaidAnalytics.Controllers.Api
         [HttpGet("reports/players")]
         public async Task<ActionResult<IEnumerable<ReportFightPlayerModel>>> GetReportFightPlayers(string code, long fight)
         {
+            if (!IsAuthorized(Request)) return Unauthorized();
+
             return await _context.ReportFightPlayers
                 .Where(x => x.ReportCode == code && x.FightNo == fight)
                 .ToListAsync();
@@ -190,6 +201,8 @@ namespace FFRaidAnalytics.Controllers.Api
         [HttpGet("players")]
         public async Task<ActionResult<IEnumerable<PlayerModel>>> GetPlayers(long? id = null, string name = "", string server = "")
         {
+            if (!IsAuthorized(Request)) return Unauthorized();
+
             if (id != null)
             {
                 PlayerModel player = await GetPlayer(id.Value);
@@ -220,6 +233,8 @@ namespace FFRaidAnalytics.Controllers.Api
         [HttpGet("encounters")]
         public async Task<ActionResult<IEnumerable<EncounterModel>>> GetEncounters(long? id = null)
         {
+            if (!IsAuthorized(Request)) return Unauthorized();
+
             if (id == null)
             {
                 return await _context.Encounters.ToListAsync();
@@ -547,6 +562,14 @@ namespace FFRaidAnalytics.Controllers.Api
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        private static bool IsAuthorized(HttpRequest request)
+        {
+            if (!request.Headers.ContainsKey("X-ACCESS-TOKEN")) return false;
+            if (request.Headers["X-ACCESS-TOKEN"] != Environment.GetEnvironmentVariable("ACCESS_TOKEN")) return false;
+
+            return true;
         }
     }
 }
