@@ -1,0 +1,133 @@
+﻿@using FFRaidAnalytics.Models;
+@{
+    string encounterName = ViewData["Title"] as string;
+
+    long pulls = Convert.ToInt64(ViewData["Pulls"]);
+    TimeSpan maxDuration = (TimeSpan)ViewData["MaxDuration"];
+    TimeSpan avgDuration = (TimeSpan)ViewData["AvgDuration"];
+    TimeSpan totalDuration = (TimeSpan)ViewData["TotalDuration"];
+
+    IEnumerable<EncounterViewPlayerModel> playerData = (IEnumerable<EncounterViewPlayerModel>)ViewData["PlayerData"];
+}
+
+<div class="content">
+    <h1 class="content-title">@encounterName</h1>
+</div>
+
+<div class="card text-center">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h1 class="font-weight-bold">@pulls.ToString("N0")</h1>
+                <p>Pulls</p>
+            </div>
+
+            <div class="col">
+                <h1 class="font-weight-bold">@maxDuration.ToString(@"mm\:ss")</h1>
+                <p>Max Duration</p>
+            </div>
+
+            <div class="col">
+                <h1 class="font-weight-bold">@avgDuration.ToString(@"mm\:ss")</h1>
+                <p>Average Duration</p>
+            </div>
+
+            <div class="col">
+                <h1 class="font-weight-bold">@totalDuration.ToString(@"d\.hh\:mm\:ss")</h1>
+                <p>Total Duration</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th class="text-right">Average DPS</th>
+                <th class="text-right">Average HPS</th>
+                <th class="text-right">Deaths</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (EncounterViewPlayerModel player in playerData)
+            {
+                <tr>
+                    <td class="text-capitalize">@player.Name</td>
+                    <td class="text-right">@player.AverageDPS.ToString("N0")</td>
+                    <td class="text-right">@player.AverageHPS.ToString("N0")</td>
+                    <td class="text-right">@player.Deaths.ToString("N0")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h1 class="card-title">Fight Duration Over Time</h1>
+
+    <br />
+
+    <canvas id="durationOverTimeChart"></canvas>
+</div>
+
+<script src="~/js/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+<script>
+    const rawData = @Json.Serialize(ViewData["Fights"] as IEnumerable<ReportFightModel>);
+
+    const data = {
+        datasets: [{
+            label: 'Duration',
+            data: rawData.map(fight => ({ x: fight["startTime"], y: fight["durationMs"] })),
+            backgroundColor: 'rgb(255, 99, 132)'
+        }]
+    };
+
+    const config = {
+        type: 'scatter',
+        data: data,
+        options: {
+            responsive: true,
+            aspectRatio: 2.66,
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                },
+                y: {
+                    ticks: {
+                        display: true,
+                        align: 'left',
+                        callback: function (v) { return msToMMSS(v); },
+                        stepSize: 60 * 1000
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return 'Duration: ' + msToMMSS(context.parsed.y) + ' at ' + new Date(context.parsed.x).toUTCString();
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    var durationOverTimeChart = new Chart(
+        document.getElementById('durationOverTimeChart'),
+        config);
+
+    function msToMMSS(ms) {
+        return new Date(ms).toISOString().substr(14, 5);
+    }
+</script>

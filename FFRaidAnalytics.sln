@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31321.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFRaidAnalytics", "FFRaidAnalytics\FFRaidAnalytics.csproj", "{D5F9432E-5D04-43EA-8BB9-3BFD1DE3B117}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{802A62A1-2628-45D1-B3C4-E905AA7C1877}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ED1B7216-7724-4D7A-8B7F-B5E3FB812E12}"
+	ProjectSection(SolutionItems) = preProject
+		.env = .env
+		.gitignore = .gitignore
+		secrets.env = secrets.env
+		secrets.example.env = secrets.example.env
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D5F9432E-5D04-43EA-8BB9-3BFD1DE3B117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F9432E-5D04-43EA-8BB9-3BFD1DE3B117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5F9432E-5D04-43EA-8BB9-3BFD1DE3B117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F9432E-5D04-43EA-8BB9-3BFD1DE3B117}.Release|Any CPU.Build.0 = Release|Any CPU
+		{802A62A1-2628-45D1-B3C4-E905AA7C1877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{802A62A1-2628-45D1-B3C4-E905AA7C1877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{802A62A1-2628-45D1-B3C4-E905AA7C1877}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{802A62A1-2628-45D1-B3C4-E905AA7C1877}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C3ADFE4B-D016-45B5-8AEB-640CFBB7DA6B}
+	EndGlobalSection
+EndGlobal

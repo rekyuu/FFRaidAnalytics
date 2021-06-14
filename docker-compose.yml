@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  ffraidanalytics:
+    image: rekyuu/ff-raid-analytics:${APP_VERSION}
+    build:
+      context: .
+      dockerfile: FFRaidAnalytics/Dockerfile
+    ports:
+      - "5000:80"
+    volumes:
+      - ./data:/data 
+    env_file:
+      - secrets.env
