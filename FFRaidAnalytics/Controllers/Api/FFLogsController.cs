@@ -271,9 +271,9 @@ namespace FFRaidAnalytics.Controllers.Api
             FFLogsData data = await MakeFFLogsQuery<FFLogsData>(new GraphQLRequest
             {
                 Query = @"
-                query getReports($userID: Int, $startTime: Float, $endTime: Float, $limit: Int) {
+                query getReports($userID: Int, $startTime: Float, $endTime: Float, $page: Int, $limit: Int) {
                     reportData {
-                        reports(userID: $userID, startTime: $startTime, endTime: $endTime, limit: $limit) {
+                        reports(userID: $userID, startTime: $startTime, endTime: $endTime, page: $page, limit: $limit) {
                             data {
                                 code
                                 startTime
@@ -346,12 +346,6 @@ namespace FFRaidAnalytics.Controllers.Api
             name = name.ToUpper();
             server = server.ToUpper();
 
-            PlayerModel player = _context.Players.SingleOrDefault(x =>
-                x.Name == name &&
-                x.Server == server);
-
-            if (player != null) return player;
-
             if (server == "EXCALIBUR")
             {
                 if (name == "RE-KYUU SENKAN")
@@ -365,6 +359,12 @@ namespace FFRaidAnalytics.Controllers.Api
                     server = "LAMIA";
                 }
             }
+
+            PlayerModel player = _context.Players.SingleOrDefault(x =>
+                x.Name == name &&
+                x.Server == server);
+
+            if (player != null) return player;
 
             // Insert player data.
             player = new()
@@ -407,7 +407,7 @@ namespace FFRaidAnalytics.Controllers.Api
             encounter = new()
             {
                 Id = encounterId,
-                EncounterName = data.WorldData.Encounter.Name
+                EncounterName = data.WorldData.Encounter != null ? data.WorldData.Encounter.Name : "Unknown Encounter"
             };
 
             _context.Encounters.Add(encounter);

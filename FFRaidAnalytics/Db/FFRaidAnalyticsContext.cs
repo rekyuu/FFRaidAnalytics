@@ -29,11 +29,21 @@ namespace FFRaidAnalytics.Db
                 x.PlayerId
             });
 
-            modelBuilder.Entity<PlayerModel>().HasIndex(x => new 
+            modelBuilder.Entity<PlayerModel>().HasIndex(x => new
             {
                 x.Name,
                 x.Server
             }).IsUnique();
+
+            modelBuilder.Entity<ReportFightModel>().HasIndex(x => new
+            {
+                x.EncounterId
+            });
+
+            modelBuilder.Entity<ReportFightModel>().HasIndex(x => new
+            {
+                x.StartTime
+            });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

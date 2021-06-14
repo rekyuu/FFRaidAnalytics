@@ -3,14 +3,16 @@ using System;
 using FFRaidAnalytics.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FFRaidAnalytics.Migrations
 {
     [DbContext(typeof(FFRaidAnalyticsContext))]
-    partial class FFRaidAnalyticsContextModelSnapshot : ModelSnapshot
+    [Migration("20210614044911_CreateFightIndexes")]
+    partial class CreateFightIndexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

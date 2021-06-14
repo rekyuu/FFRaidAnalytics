@@ -40,17 +40,18 @@ namespace FFRaidAnalytics.Controllers
             IEnumerable<ReportFightModel> fights = _context.ReportFights
                 .Where(x => x.EncounterId == id);
 
-            IEnumerable<object> reportFights = fights
-                .Select(x => new { x.ReportCode, x.FightNo })
-                .Distinct();
-
             long maxDuration = fights.Max(x => x.DurationMs);
             double avgDuration = fights.Average(x => x.DurationMs);
             long totalDuration = fights.Sum(x => x.DurationMs);
 
-            IEnumerable<ReportFightPlayerModel> playerFights = _context.ReportFightPlayers
-                .AsEnumerable()
-                .Where(x => reportFights.Contains(new { x.ReportCode, x.FightNo }));
+            List<ReportFightPlayerModel> playerFights = new();
+            foreach (ReportFightModel fight in fights)
+            {
+                IEnumerable<ReportFightPlayerModel> fightPlayers = _context.ReportFightPlayers
+                    .Where(x => x.ReportCode == fight.ReportCode && x.FightNo == fight.FightNo);
+
+                playerFights.AddRange(fightPlayers);
+            }
 
             IEnumerable<long> reportPlayers = playerFights
                 .Select(x => x.PlayerId)
